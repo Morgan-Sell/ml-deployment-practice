@@ -8,7 +8,12 @@ OUTPUT_MODEL_PATH = 'logistic_regression.pkl'
 # ======= PARAMETERS ===============
 
 # imputation parameters
-IMPUTATION_DICT =
+# features and the respective values used to fill NAs.
+# Values are the median of the specified features in the training set.
+IMPUTATION_DICT = {
+    'age': 28.0,
+    'far': 14.4542
+}
 
 
 # encoding parameters
