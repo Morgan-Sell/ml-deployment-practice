@@ -51,15 +51,18 @@ def impute_na():
     # or by string Missing (default behaviour)
     for var in config.NUMERICAL_TO_IMPUTE:
         fill_value = config.IMPUTATION_DICT[var]
-        df[var].fillna(fill_value, inplace=True)
-
+        X_train[var].fillna(fill_value, inplace=True)
+        X_test[var].fillna(fill_value, inplace=True)
 
 
 
 def remove_rare_labels():
     # groups labels that are not in the frequent list into the umbrella
     # group Rare
-    pass
+    for var in config.CATEGORICAL_VARS:
+        freq_labels = config.FREQUENT_LABELS[var]
+        X_train[var] = np.where(X_train[var].isin(freq_labels), X_train[var], 'Rare')
+        X_test[var] = np.where(X_train[var].isin(freq_labels), X_test[var], 'Rare')
 
 
 
@@ -67,8 +70,13 @@ def encode_categorical(df, var):
     # adds ohe variables and removes original categorical variable
 
     df = df.copy()
+    for var in config.CATEGORICAL_VARS:
+        df = pd.concat([df,
+                        pd.get_dummies(df[var], prefix=var, drop_first=True)],
+                        axis=1)
 
-    pass
+    df.drop(labels=config.CATEGORICAL_VARS, axis=1, inplace=True)
+    return df
 
 
 
@@ -76,7 +84,17 @@ def check_dummy_variables(df, dummy_list):
 
     # check that all missing variables where added when encoding, otherwise
     # add the ones that are missing
-    pass
+    df = df.copy()
+    missing_vars = list(set(dummy_list) - set(df.columns))
+
+    # If no features are missing, do not revise df.
+    if len(missing_vars) == 0:
+        return df
+
+    for var in missing_vars:
+        df[var] = 0
+
+    return df
 
 
 def train_scaler(df, output_path):
