@@ -27,13 +27,12 @@ def divide_train_test(df, target):
         X, y, test_size=0.2, random_state=0
     )
 
+    return X_train, X_test, y_train, y_test
 
 
 def extract_cabin_letter(df, var):
     # captures the first letter
-    df = df.copy()
-    df[var] = df[var].str[0]
-    return df
+    return df[var].str[0]
 
 
 
@@ -45,13 +44,15 @@ def add_missing_indicator(df, var):
 
 
 
-def impute_na():
+def impute_na(df, var):
     # function replaces NA by value entered by user
     # or by string Missing (default behaviour)
-    for var in config.NUMERICAL_TO_IMPUTE:
+    if var in config.NUMERICAL_TO_IMPUTE:
         fill_value = config.IMPUTATION_DICT[var]
-        X_train[var].fillna(fill_value, inplace=True)
-        X_test[var].fillna(fill_value, inplace=True)
+    else:
+        fill_value = 'Missing'
+    return df[var].fillna(fill_value)
+
 
 
 
