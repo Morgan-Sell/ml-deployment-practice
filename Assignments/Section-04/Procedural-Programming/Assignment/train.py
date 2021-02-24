@@ -35,7 +35,7 @@ for var in config.CATEGORICAL_VARS:
 
 
 # encode categorical variables
-X_train = pf.encode_categorical(X_train)
+X_train = pf.encode_categorical(X_train, config.CATEGORICAL_VARS)
 
 
 # check all dummies were added
@@ -51,9 +51,7 @@ X_train_scaled = pf.scale_features(X_train, scaler)
 
 
 # train model and save
-pf.train_model(X_train_scaled,
-                y_train,
-                config.OUTPUT_MODEL_PATH)
+pf.train_model(X_train_scaled, y_train, config.OUTPUT_MODEL_PATH)
 
 
 print('Finished training')

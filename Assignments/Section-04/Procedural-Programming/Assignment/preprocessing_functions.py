@@ -52,20 +52,20 @@ def impute_na(df, var, replacement='Missing'):
 def remove_rare_labels(df, var, freq_labels):
     # groups labels that are not in the frequent list into the umbrella
     # group Rare
-    return np.where(X_train[var].isin(freq_labels), X_train[var], 'Rare')
+    return np.where(df[var].isin(freq_labels), df[var], 'Rare')
 
 
 
-def encode_categorical(df):
+def encode_categorical(df, vars_categorical):
     # adds ohe variables and removes original categorical variable
 
     df = df.copy()
-    for var in config.CATEGORICAL_VARS:
+    for var in vars_categorical:
         df = pd.concat([df,
                         pd.get_dummies(df[var], prefix=var, drop_first=True)],
                         axis=1)
 
-    df.drop(labels=config.CATEGORICAL_VARS, axis=1, inplace=True)
+    df.drop(labels=vars_categorical, axis=1, inplace=True)
     return df
 
 
@@ -98,7 +98,7 @@ def train_scaler(df, output_path):
 
 def scale_features(df, scaler):
     # load scaler and transform data
-    scaler = joblib.load(scaler)
+    # scaler = joblib.load(scaler)
     return scaler.transform(df)
 
 
