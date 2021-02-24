@@ -6,7 +6,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 
 import joblib
-
 import config
 
 
@@ -15,7 +14,7 @@ import config
 
 def load_data(df_path):
     # Function loads data for training
-    return pd.read_csv('ttps://www.openml.org/data/get_csv/16826755/phpMYEkMl')
+    return pd.read_csv(df_path)
 
 
 
@@ -24,15 +23,14 @@ def divide_train_test(df, target):
     X = df.drop(target, axis=1)
     y = df[target]
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=0
-    )
+        X, y, test_size=0.2, random_state=0)
 
     return X_train, X_test, y_train, y_test
 
 
-def extract_cabin_letter(df, var):
+def extract_cabin_letter(df):
     # captures the first letter
-    return df[var].str[0]
+    return df['cabin'].str[0]
 
 
 
@@ -44,21 +42,16 @@ def add_missing_indicator(df, var):
 
 
 
-def impute_na(df, var):
+def impute_na(df, var, replacement='Missing'):
     # function replaces NA by value entered by user
     # or by string Missing (default behaviour)
-    if var in config.NUMERICAL_TO_IMPUTE:
-        fill_value = config.IMPUTATION_DICT[var]
-    else:
-        fill_value = 'Missing'
-    return df[var].fillna(fill_value)
+    return df[var].fillna(replacement)
 
 
 
-def remove_rare_labels(df, var):
+def remove_rare_labels(df, var, freq_labels):
     # groups labels that are not in the frequent list into the umbrella
     # group Rare
-    freq_labels = config.FREQUENT_LABELS[var]
     return np.where(X_train[var].isin(freq_labels), X_train[var], 'Rare')
 
 
