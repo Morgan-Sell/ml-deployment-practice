@@ -19,14 +19,14 @@ pipeline = Pipeline(target =  config.TARGET,
 
 
 if __name__ == '__main__':
-    
+
     # load data set
     data = pd.read_csv(config.PATH_TO_DATASET)
-    
+
     pipeline.fit(data)
     print('model performance')
     pipeline.evaluate_model()
     print()
     print('Some predictions:')
-    preditions = pipeline.predict(data)
-    print(preditions)
+    predictions = pipeline.predict(data)
+    print(predictions)
