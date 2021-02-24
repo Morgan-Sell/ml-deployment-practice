@@ -47,7 +47,7 @@ scaler = pf.train_scaler(X_train, config.OUTPUT_SCALER_PATH)
 
 
 # scale train set
-X_train_scaled = pf.scale_features(X_train, scaler)
+X_train_scaled = scaler.transform(X_train)
 
 
 # train model and save

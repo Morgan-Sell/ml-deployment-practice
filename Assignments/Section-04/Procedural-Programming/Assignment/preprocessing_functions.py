@@ -78,7 +78,7 @@ def check_dummy_variables(df, dummy_list):
 
     # If no features are missing, do not revise df.
     if len(missing_vars) == 0:
-        return df
+        print('All dummy variables were added.')
 
     for var in missing_vars:
         df[var] = 0
@@ -96,9 +96,9 @@ def train_scaler(df, output_path):
 
 
 
-def scale_features(df, scaler):
+def scale_features(df, output_path):
     # load scaler and transform data
-    # scaler = joblib.load(scaler)
+    scaler = joblib.load(output_path)
     return scaler.transform(df)
 
 
