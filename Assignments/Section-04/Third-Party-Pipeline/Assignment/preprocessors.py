@@ -8,19 +8,24 @@ from sklearn.base import BaseEstimator, TransformerMixin
 class MissingIndicator(BaseEstimator, TransformerMixin):
 
     def __init__(self, variables=None):
-        pass
-
+        # Checks to see if a list is passed.
+        # If string is passed, changes type to list.
+        if not isinstance(variables, list):
+            self.variables = [variables]
+        else:
+            self.variables = variables
 
     def fit(self, X, y=None):
         # to accommodate sklearn pipeline functionality
-        pass
+        return self
 
 
     def transform(self, X):
         # add indicator
         X = X.copy()
-        pass
-
+        for feature in self.variables:
+            X[feature] = X[feature].fillna('Missing')
+        return X
 
 # categorical missing value imputer
 class CategoricalImputer(BaseEstimator, TransformerMixin):

@@ -5,7 +5,8 @@ from sklearn.preprocessing import MinMaxScaler
 import preprocessors as pp
 import config
 
-
+# String should have a meaningful name.
+# The name explains the step.
 price_pipe = Pipeline(
     [
         ('categorical_imputer',

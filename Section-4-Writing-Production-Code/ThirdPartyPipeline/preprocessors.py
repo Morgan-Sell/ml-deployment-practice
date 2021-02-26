@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+# import includes all the methods associated w/ the two class objects.
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
