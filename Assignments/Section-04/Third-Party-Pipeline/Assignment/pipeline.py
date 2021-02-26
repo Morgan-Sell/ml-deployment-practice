@@ -26,7 +26,7 @@ titanic_pipe = Pipeline(
             pp.RareLabelCategoricalEncoder(variables=config.CATEGORICAL_VARS)),
         
         ('one_hot_encoder_categorical',
-            pp.CategoricalEncoder(varialbes=config.CATEGORICAL_VARS)),
+            pp.CategoricalEncoder(variables=config.CATEGORICAL_VARS)),
         
         ('scaler', StandardScaler()),
 

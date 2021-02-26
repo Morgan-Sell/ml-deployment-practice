@@ -34,10 +34,10 @@ class CategoricalImputer(BaseEstimator, TransformerMixin):
     def __init__(self, variables=None):
     # Checks to see if a list is passed.
     # If string is passed, changes type to list.
-    if not isinstance(variables, list):
-        self.variables = [varialbes]
-    else:
-        self.variables = variables
+        if not isinstance(variables, list):
+            self.variables = [variables]
+        else:
+            self.variables = variables
 
     def fit(self, X, y=None):
         # fit statement to accommodate the sklearn pipeline
@@ -55,10 +55,10 @@ class NumericalImputer(BaseEstimator, TransformerMixin):
     def __init__(self, variables=None):
     # Checks to see if a list is passed.
     # If string is passed, changes type to list.
-    if not isintance(variables, list):
-        self.variables = [variables]
-    else:
-        self.variables = variables
+        if not isinstance(variables, list):
+            self.variables = [variables]
+        else:
+            self.variables = variables
 
     def fit(self, X, y=None):
         # persist mode in a dictionary
@@ -111,14 +111,14 @@ class RareLabelCategoricalEncoder(BaseEstimator, TransformerMixin):
         self.freq_labels_dict_ = {}
         for feature in self.variables:
             freq_var = pd.Series(X[feature].value_counts() / np.float(len(X)))
-            self.freq_labels_dict_[var] = list(freq_var[freq_var >= self.tolerance].index)
+            self.freq_labels_dict_[feature] = list(freq_var[freq_var >= self.tolerance].index)
 
     def transform(self, X):
         # if feature value is not in the frequent labels...
         # ... then replace with 'Rare'
         X = X.copy()
         for feature in self.variables:
-            X[feature] = np.where(X[feature].isin(self.freq_labels_var_[feature]),
+            X[feature] = np.where(X[feature].isin(self.freq_labels_dict_[feature]),
                                     X[feature], 'Rare')
         
         return X

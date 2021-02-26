@@ -52,6 +52,7 @@ class NumericalImputer(BaseEstimator, TransformerMixin):
 
 
 # Temporal variable calculator
+# calculates the time between two years.
 class TemporalVariableEstimator(BaseEstimator, TransformerMixin):
 
     def __init__(self, variables=None, reference_variable=None):

@@ -10,6 +10,8 @@ TARGET = 'survived'
 
 CATEGORICAL_VARS = ['sex', 'cabin', 'embarked', 'title']
 
-NUMERICAL_VARS = ['age', 'fare']
+NUMERICAL_VARS = ['pclass', 'age', 'sibsp', 'parch', 'fare']
 
 CABIN = 'cabin'
+
+ALL_FEATURES = ['pclass', 'age', 'sibsp', 'parch', 'fare', 'sex', 'cabin', 'embarked', 'title']
