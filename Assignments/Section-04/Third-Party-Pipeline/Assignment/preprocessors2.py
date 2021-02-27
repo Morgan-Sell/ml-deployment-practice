@@ -3,57 +3,53 @@ import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
-import config
 
 # Add binary variable to indicate missing values
 class MissingIndicator(BaseEstimator, TransformerMixin):
 
     def __init__(self, variables=None):
-        # Checks to see if a list is passed.
-        # If string is passed, changes type to list.
         if not isinstance(variables, list):
             self.variables = [variables]
         else:
             self.variables = variables
 
     def fit(self, X, y=None):
-        # fit the statement to accommodate sklearn pipeline functionality
+        # to accommodate sklearn pipeline functionality
         return self
 
     def transform(self, X):
         # add indicator
         X = X.copy()
         for feature in self.variables:
-            X[feature+'_na'] = np.where(X[feature].isnull(), 1, 0)
+            X[feature + '_na'] = np.where(X[feature].isnull(),1,0)
         return X
+
 
 # categorical missing value imputer
 class CategoricalImputer(BaseEstimator, TransformerMixin):
 
     def __init__(self, variables=None):
-    # Checks to see if a list is passed.
-    # If string is passed, changes type to list.
         if not isinstance(variables, list):
             self.variables = [variables]
         else:
             self.variables = variables
 
     def fit(self, X, y=None):
-        # fit statement to accommodate the sklearn pipeline
+        # we need the fit statement to accommodate the sklearn pipeline
         return self
 
     def transform(self, X):
         X = X.copy()
         for feature in self.variables:
             X[feature] = X[feature].fillna('Missing')
+
         return X
+
 
 # Numerical missing value imputer
 class NumericalImputer(BaseEstimator, TransformerMixin):
 
     def __init__(self, variables=None):
-    # Checks to see if a list is passed.
-    # If string is passed, changes type to list.
         if not isinstance(variables, list):
             self.variables = [variables]
         else:
@@ -62,8 +58,10 @@ class NumericalImputer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         # persist mode in a dictionary
         self.imputer_dict_ = {}
+
         for feature in self.variables:
             self.imputer_dict_[feature] = X[feature].mean()
+        return self
 
     def transform(self, X):
 
@@ -73,11 +71,11 @@ class NumericalImputer(BaseEstimator, TransformerMixin):
         return X
 
 
-
 # Extract first letter from string variable
 class ExtractFirstLetter(BaseEstimator, TransformerMixin):
 
     def __init__(self, variables=None):
+
         if not isinstance(variables, list):
             self.variables = [variables]
         else:
@@ -91,41 +89,45 @@ class ExtractFirstLetter(BaseEstimator, TransformerMixin):
         X = X.copy()
         for feature in self.variables:
             X[feature] = X[feature].str[0]
-        return X        
+
+        return X
+
 
 # frequent label categorical encoder
 class RareLabelCategoricalEncoder(BaseEstimator, TransformerMixin):
 
     def __init__(self, tol=0.05, variables=None):
-        self.tolerance = tol
 
-        if isinstance(variables, list): 
-            self.variables = variables
+        self.tol = tol
+
+        if not isinstance(variables, list):
+            self.variables = [variables]
         else:
             self.variables = variables
 
     def fit(self, X, y=None):
 
         # persist frequent labels in dictionary
-        self.freq_labels_dict_ = {}
-        for feature in self.variables:
-            freq_var = pd.Series(X[feature].value_counts() / np.float(len(X)))
-            self.freq_labels_dict_[feature] = list(freq_var[freq_var >= self.tolerance].index)
+        self.encoder_dict_ = {}
+
+        for var in self.variables:
+            # the encoder will learn the most frequent categories
+            t = pd.Series(X[var].value_counts() / np.float(len(X)))
+            # frequent labels:
+            self.encoder_dict_[var] = list(t[t >= self.tol].index)
+
+        return self
 
     def transform(self, X):
-        # if feature value is not in the frequent labels...
-        # ... then replace with 'Rare'
         X = X.copy()
         for feature in self.variables:
-            X[feature] = np.where(X[feature].isin(self.freq_labels_dict_[feature]),
-                                    X[feature], 'Rare')
-        
+            X[feature] = np.where(X[feature].isin(self.encoder_dict_[
+                                                      feature]), X[feature], 'Rare')
+
         return X
-            
-                        
 
 
-# add one-hot encoder variables and remove original categorical variables
+# string to numbers categorical encoder
 class CategoricalEncoder(BaseEstimator, TransformerMixin):
 
     def __init__(self, variables=None):
@@ -136,24 +138,24 @@ class CategoricalEncoder(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
 
-        # HINT: persist the dummy variables found in train set
+        # persist the dummy variables found in train set
         self.dummies = pd.get_dummies(X[self.variables], drop_first=True).columns
-        
         return self
 
     def transform(self, X):
         # encode labels
         X = X.copy()
-        # get dummies
-        
-        X = pd.concat([X, pd.get_dummies(X[self.variables], drop_first=True)], axis=1)
-        # drop original variables
-        X.drop(self.variables, axis=1, inplace=True)
+        X = pd.concat([X,
+                       pd.get_dummies(X[self.variables], drop_first=True)],
+                       axis=1)
+
+        X.drop(labels=self.variables, axis=1, inplace=True)
+
         # add missing dummies if any
         missing_vars = [var for var in self.dummies if var not in X.columns]
 
         if len(missing_vars) != 0:
-            for var in  missing_vars:
+            for var in missing_vars:
                 X[var] = 0
-    
+
         return X
